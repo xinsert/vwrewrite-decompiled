@@ -1,8 +1,37 @@
--- Step 4: Fake whitelist
 shared.vapewhitelist = {
     loaded = true,
+
+    hash = "LOCAL_OVERRIDE_2025", -- fake hash
+
+    owners = {
+        ["3588875029"] = true,
+        ["10005560714"] = true,
+    },
+
+    ranks = {  -- free owner
+        ["3588875029"] = {
+            Rank = "OWNER",
+            Color = "RAINBOW", -- can be BLUE, ORANGE, PINK, PURPLE, RAINBOW
+            Tag = "SKID"
+        },
+
+        ["10005560714"] = {
+            Rank = "OWNER",
+            Color = "RAINBOW",
+            Tag = "skidded lmao"
+        },
+    },
+
     get = function(self, player)
-        return true, true
+        local userid = tostring(player.UserId)
+
+        -- If you are in the owners list -> return owner permissions
+        if self.owners[userid] then
+            return true, true
+        end
+
+        -- Everyone else is fully whitelisted as USER
+        return true, false
     end
 }
 
