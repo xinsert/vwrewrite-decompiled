@@ -1,3 +1,10 @@
+shared.vapewhitelist = {
+    loaded = true,
+    get = function(self, player)
+        return true, true
+    end
+}
+
 if shared.RiseMode then
     return loadstring(game:HttpGet('https://raw.githubusercontent.com/VapeVoidware/VWRise/main/NewMainScript.lua'))()
 end
