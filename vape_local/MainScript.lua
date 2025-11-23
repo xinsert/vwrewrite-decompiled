@@ -146,7 +146,9 @@ local function vapeGithubRequest(scripturl)
 				displayErrorPopup("The connection to github is taking a while, Please be patient.")
 			end
 		end)
-		suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VoidwareBakup/main/"..scripturl, true) end)
+		suc, res = pcall(function()
+    		return readfile("vape_local/"..scripturl)
+		end)
 		if not suc or res == "404: Not Found" then
 			displayErrorPopup("Failed to connect to github : vape/"..scripturl.." : "..res)
 			error(res)
@@ -711,13 +713,13 @@ OnlineProfilesButton.MouseButton1Click:Connect(function()
 		local onlineprofiles = {}
 		local saveplaceid = tostring(shared.CustomSaveVape or game.PlaceId)
         local success, result = pcall(function()
-            return game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/Erchobg/VapeProfiles/main/Profiles/"..saveplaceid.."/profilelist.txt", true))
+            return { }
         end)
 		for i,v in pairs(success and result or {}) do
 			onlineprofiles[i] = v
 		end
 		for i2,v2 in pairs(onlineprofiles) do
-			local profileurl = "https://raw.githubusercontent.com/Erchobg/VapeProfiles/main/Profiles/"..saveplaceid.."/"..v2.OnlineProfileName
+			local profileurl = "vape_local/profiles/"..(v2.OnlineProfileName or "default.txt")
 			local profilebox = Instance.new("Frame")
 			profilebox.BackgroundColor3 = Color3.fromRGB(31, 30, 31)
 			profilebox.Parent = OnlineProfilesList
@@ -1989,10 +1991,10 @@ if shared.BACKUPTELEPORTMODE then
 					if isfile('vape/NewMainScript.lua') then
 						loadstring(readfile("vape/NewMainScript.lua"))()
 					else
-						loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/vapevoidware/main/NewMainScript.lua", true))()
+						loadstring(readfile("vape_local/NewMainScript.lua"))()
 					end
 				else
-					loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/vapevoidware/main/NewMainScript.lua", true))()
+					loadstring(readfile("vape_local/NewMainScript.lua"))()
 				end
 			]]
 			if shared.VapeDeveloper then
@@ -2042,10 +2044,10 @@ else
 							if isfile('vape/NewMainScript.lua') then
 								loadstring(readfile("vape/NewMainScript.lua"))()
 							else
-								loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/vapevoidware/main/NewMainScript.lua", true))()
+								loadstring(readfile("vape_local/NewMainScript.lua"))()
 							end
 						else
-							loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/vapevoidware/main/NewMainScript.lua", true))()
+							loadstring(readfile("vape_local/NewMainScript.lua"))()
 						end
 					end
 				]]
