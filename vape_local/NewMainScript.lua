@@ -1,5 +1,35 @@
+-- Step 4: Fake whitelist
+shared.vapewhitelist = {
+    loaded = true,
+    get = function(self, player)
+        return true, true
+    end
+}
+
+-- Step 5: fuck with erchobg
+local localPath = "vape_local"  -- hijacking folder
+
+repoOwner = ""  -- clear this so any concatenation doesn't break (if erchobg is reading this, gimme vw inf for free user on disc is insyyt#0 dm me ty pookie :333)
+res1 = localPath
+
+local oldHttpGet = game.HttpGet
+function game:HttpGet(url, ...)
+    local filename = url:match(".+/(.+)%.lua")
+    if filename then
+        local fullPath = localPath.."/"..filename..".lua"
+        if pcall(function() readfile(fullPath) end) then
+            return readfile(fullPath)
+        else
+            warn("[Vape Local Loader] File not found:", fullPath)
+            return ""
+        end
+    else
+        return oldHttpGet(self, url, ...)
+    end
+end
+
 if shared.RiseMode then
-    return loadstring(game:HttpGet('https://raw.githubusercontent.com/VapeVoidware/VWRise/main/NewMainScript.lua'))()
+    return loadstring(readfile("vape_local/NewMainScript.lua"))()
 end
 local smooth = not game:IsLoaded()
 repeat task.wait() until game:IsLoaded()
@@ -38,7 +68,7 @@ end)
 
 if not shared.VapeDeveloper then
 	local _, subbed = pcall(function()
-		return game:HttpGet('https://github.com/VapeVoidware/VWRewrite')
+		return readfile("vape_local/NewMainScript.lua")
 	end)
 	local commit = subbed:find('currentOid')
 	commit = commit and subbed:sub(commit + 13, commit + 52) or nil
@@ -79,7 +109,7 @@ local function checkExecutor()
             return identifyexecutor()
         end)   
         --local blacklist = {'appleware', 'cryptic', 'delta', 'wave', 'codex', 'swift', 'solara', 'vega'}
-        local blacklist = {'solara', 'cryptic', 'xeno', 'ember', 'ronix'}
+        local blacklist = {'solara', 'cryptic', 'xeno', 'ember', 'ronix'} -- i hate solara too
         local core_blacklist = {'solara', 'xeno'}
         if suc then
             for i,v in pairs(blacklist) do
@@ -154,7 +184,10 @@ local function install_profiles(num)
     local profilesfetched
     local repoOwner = shared.RiseMode and "VapeVoidware/RiseProfiles" or "Erchobg/VoidwareProfiles"
     local function vapeGithubRequest(scripturl)
-        local suc, res = pcall(function() return game:HttpGet('https://raw.githubusercontent.com/'..repoOwner..'/main/'..scripturl, true) end)
+        local suc, res = pcall(function()
+    		return readfile("vape_local/"..scripturl)
+		end)
+
         if not isfolder(baseDirectory.."profiles") then
             makefolder(baseDirectory..'profiles')
         end
@@ -196,7 +229,7 @@ local function install_profiles(num)
     task.spawn(function()
         local res1
         if num == 1 then
-            res1 = "https://api.github.com/repos/"..repoOwner.."/contents/Rewrite"
+            res1 = "vape_local/" -- fuck you lmao
         end
         res = game:HttpGet(res1, true)
         if res ~= '404: Not Found' then 
@@ -209,7 +242,7 @@ local function install_profiles(num)
         profilesfetched = true
     end)
     repeat task.wait() until profilesfetched
-    for i, v in pairs(guiprofiles) do
+    for i, v in pairs(guiprofiles) do -- i love skidding
         local name
         if num == 1 then name = "Profiles/" end
         downloadVapeProfile(name..guiprofiles[i])
@@ -224,7 +257,7 @@ local function are_installed_1()
     if isfile(baseDirectory..'libraries/profilesinstalled5.txt') then return true else return false end
 end
 if not are_installed_1() then pcall(function() install_profiles(1) end) end
-local url = shared.RiseMode and "https://github.com/VapeVoidware/VWRise/" or "https://github.com/VapeVoidware/VWRewrite"
+local url = "vape_local/" -- lol
 local commit = "main"
 writefile(baseDirectory.."commithash2.txt", commit)
 commit = '0317e9f4c881faadbf7ebe8aa5970200e02b42a7'
@@ -245,8 +278,10 @@ local function vapeGithubRequest(scripturl, isImportant)
     end
     local suc, res
     if commit == nil then commit = "main" end
-    local url = (scripturl == "MainScript.lua" or scripturl == "GuiLibrary.lua") and shared.RiseMode and "https://raw.githubusercontent.com/VapeVoidware/VWRise/" or "https://raw.githubusercontent.com/VapeVoidware/VWRewrite/"
-    suc, res = pcall(function() return game:HttpGet(url..commit.."/"..scripturl, true) end)
+    local url = "vape_local/"
+    local suc, res = pcall(function()
+    	return readfile("vape_local/"..scripturl)
+	end)
     if not suc or res == "404: Not Found" then
         if isImportant then
             game:GetService('StarterGui'):SetCore('SendNotification', {
@@ -308,7 +343,7 @@ task.spawn(function()
                 return values
             end
             
-            local ChatTagType = {
+            local ChatTagType = { -- wonder what this is for
                 VIP = true,
                 TRANSLATOR = true,
                 DEV = true,
